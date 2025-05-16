@@ -45,6 +45,32 @@ pipeline {
                     '''
                 }
             }
-        }
+       }
+
+        stage("Push the changed deployment file to Git") {
+            steps {
+                sh """
+                    git config user.name "nilesh151299"
+                    git config user.email "sonawanenilesh151299@gmail.com"
+                    git add deployment.yaml
+                    git commit -m "Updated Deployment Manifest" || echo "No changes to commit"
+                 """
+
+                 withCredentials([sshUserPrivateKey(credentialsId: 'github-ssh', keyFileVariable: 'SSH_KEY')]) {
+                     sh '''
+                         eval `ssh-agent -s`
+                         ssh-add $SSH_KEY
+
+                         # 👇 This line ensures the GitHub SSH host key is trusted
+                         ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+                         git push git@github.com:Nilesh151299/gitops-register-app.git main
+                     '''
+                   }
+              }
+         }
+
+
+
     }
 }
