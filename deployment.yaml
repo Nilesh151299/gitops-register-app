@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: register-app
-          image: nilesh151299/register-app-pipeline1:1.0.0-13
+          image: 583169991743.dkr.ecr.us-east-1.amazonaws.com/ci-cd/java_image:v1
           resources:
             limits:
               memory: "256Mi"
