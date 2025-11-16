@@ -1,6 +1,10 @@
 pipeline {
     agent { label "Jenkins-Agent" }
 
+    parameters {
+        string(name: 'IMAGE_TAG', defaultValue: '', description: 'Tag of the new Docker image')
+    }
+
     environment {
         ECR_IMAGE = "583169991743.dkr.ecr.us-east-1.amazonaws.com/ci-cd/java_image"
     }
@@ -38,16 +42,17 @@ pipeline {
                 sh """
                     git config --global user.name "Nilesh151299"
                     git config --global user.email "sonawanenilesh151299@gmail.com"
-
-                    # Check if there are changes
-                    if git diff --quiet; then
-                        echo "No changes detected. Skipping commit and push."
-                    else
-                        git add deployment.yaml
-                        git commit -m "Updated Deployment Manifest with tag ${IMAGE_TAG}"
-                        git push https://github.com/Nilesh151299/gitops-register-app.git main
-                    fi
                 """
+
+                withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    sh """
+                        git add deployment.yaml || true
+                        git commit -m "Updated Deployment Manifest with tag ${IMAGE_TAG}" || true
+
+                        git remote set-url origin https://${GIT_USER}:${GIT_PASS}@github.com/Nilesh151299/gitops-register-app.git
+                        git push origin main
+                    """
+                }
             }
         }
     }
