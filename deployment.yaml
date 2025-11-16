@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: register-app
-          image: 583169991743.dkr.ecr.us-east-1.amazonaws.com/ci-cd/java_image:v1
+          image: 583169991743.dkr.ecr.us-east-1.amazonaws.com/ci-cd/java_image:
           resources:
             limits:
               memory: "256Mi"
